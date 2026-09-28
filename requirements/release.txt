@@ -1,0 +1,4 @@
+deepspeed==0.17.6
+flash-attn==2.8.3
+flash-linear-attention==0.4.1
+causal-conv1d==1.6.1

@@ -1,0 +1,2 @@
+recursive-include requirements *.txt
+include LICENSE NOTICE README.md
