@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SyncPro · Video Showcase</title>
+  <style>
+    :root{--ink:#243244;--muted:#657587;--line:#dce3ed;--purple:#8651bf;--pink:#d85d91;--blue:#365a85}
+    *{box-sizing:border-box}body{margin:0;background:#f6f8fb;color:var(--ink);font:15px/1.6 "Comic Sans MS","Comic Sans",-apple-system,sans-serif}button,a,input{font:inherit}button{cursor:pointer}a{color:var(--blue)}
+    main{max-width:1280px;margin:auto;padding:32px 32px 60px}header{display:flex;align-items:center;gap:14px;padding-bottom:24px}header img{width:54px;height:54px;object-fit:contain}h1{font-size:28px;margin:0;letter-spacing:-.04em}header p{margin:2px 0;color:var(--muted);font-size:13px}.edition{margin-left:auto;background:#fff;padding:5px 12px;border:1px solid var(--line);border-radius:20px;font-size:12px;white-space:nowrap}
+    header .affiliation{margin-top:12px;font-size:14px;line-height:1.7;color:var(--ink)}header .affiliation a{color:inherit;text-decoration:none}header .affiliation a:hover{text-decoration:underline}header .affiliation strong{font-weight:700}
+    .player-shell{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:white;box-shadow:0 8px 30px #28395109}video{display:block;width:100%;aspect-ratio:16/9;background:#182330}.player-meta{padding:18px 22px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}.player-meta>div{min-width:0}.player-meta h2{font-size:18px;margin:0}.player-meta p{margin:3px 0 0;font-size:12px;color:var(--muted);overflow-wrap:anywhere}.download{margin-left:auto;text-decoration:none;font-size:13px;background:#f0f4fa;padding:8px 13px;border-radius:7px}
+    .versions{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}.versions button,.chapters button,.filter button{border:1px solid var(--line);border-radius:7px;background:white;padding:8px 13px;color:var(--ink)}.versions button.active,.filter button.active{background:#243244;color:white;border-color:#243244}.legend{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.purple{background:var(--purple)}.pink{background:var(--pink)}
+    .chapters{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0 24px;color:var(--muted);font-size:12px}.chapters button{font-size:12px;padding:5px 9px}.section-head{display:flex;gap:20px;align-items:center;margin:32px 0 15px}.section-head h2{font-size:20px;margin:0}.section-head p{margin:0;font-size:13px;color:var(--muted)}.filter{margin-left:auto;display:flex;gap:6px}.filter button{font-size:12px;padding:6px 11px}
+    .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card{display:block;min-width:0;text-align:left;padding:0;border:1px solid var(--line);background:white;border-radius:11px;overflow:hidden;color:inherit}.card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}.card:hover,.card.active{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple)}.card-body{padding:12px 14px}.card .tag{font-size:11px;color:var(--purple)}.card h3{font-size:14px;margin:5px 0 8px}.card small{font-size:11px;color:var(--muted)}
+    details{border-top:1px solid var(--line);padding:16px 22px;color:var(--muted);font-size:13px}summary{cursor:pointer}.detail-content{margin-top:12px;line-height:1.8}.trace{display:grid;grid-template-columns:76px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #edf0f5}.trace time{font-size:12px;white-space:nowrap}.trace p{margin:0}.trace .think{color:var(--purple)}.trace .speak{color:#9e3866}footer{margin-top:34px;border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--muted)}footer p{margin:5px 0}.empty{padding:30px;color:var(--muted)}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #9aa9eb;outline-offset:4px}
+    @media(max-width:980px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.legend{margin-left:0}.section-head{flex-wrap:wrap}.filter{margin-left:0}}@media(max-width:600px){main{padding:18px 12px 35px}header{gap:9px}header img{width:40px;height:40px}h1{font-size:22px}.edition{display:none}.player-meta{padding:12px}.download{margin-left:0}.cards{gap:10px}.card-body{padding:10px}.card h3{font-size:13px}details{padding:12px}}
+  </style>
+</head>
+<body>
+<main>
+<header><img src="assets/syncpro-mascot.png" alt="SyncPro"><div><h1>SyncPro</h1><p>Synchronous Reasoning and Responding for Proactive Streaming Video Understanding</p><p class="affiliation"><strong><a href="https://klais.ict.ac.cn/" target="_blank" rel="noopener">State Key Laboratory of AI Safety</a></strong><br><a href="https://english.ict.cas.cn/" target="_blank" rel="noopener">Institute of Computing Technology, Chinese Academy of Sciences</a></p></div></header>
+  <div class="versions"><button id="musicButton" class="active">配乐合集</button><button id="silentButton">静音合集</button><div class="legend"><span><i class="dot purple"></i>Inner</span><span><i class="dot pink"></i>Response</span></div></div>
+  <section class="player-shell">
+    <video id="player" controls playsinline preload="metadata" poster="posters/case_0923.jpg" src="SyncPro_showcase_music.mp4" aria-label="SyncPro 展示视频"></video>
+    <div class="player-meta"><div><h2 id="playingTitle">合集 · 配乐版</h2><p id="playingNote">轻音乐铺底，输出出现时自动降低音量；原视频声音关闭。</p></div><a class="download" id="downloadLink" href="SyncPro_showcase_music.mp4" download>下载当前视频 ↓</a></div>
+    <details id="details"><summary>查看输出记录</summary><div class="detail-content" id="detailContent"></div></details>
+  </section>
+  <div class="chapters" id="chapters"><span>合集跳转：</span></div>
+  <div class="section-head"><div><h2>独立 case</h2><p>点击卡片播放；独立视频均为静音版。</p></div><div class="filter"><button class="active" data-role="main">主展示</button><button data-role="reserve">备选</button><button data-role="all">全部</button></div></div>
+  <div class="cards" id="cards"></div>
+  <footer><a href="MUSIC_CREDITS.txt">Credits</a></footer>
+</main>
+<script src="review-data.js"></script>
+<script>
+const $=id=>document.getElementById(id), player=$('player'), DATA=window.SYNCPRO_REVIEW;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const duration=s=>{const t=Math.round(s);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;};
+$('musicButton').textContent=`配乐合集 · ${duration(DATA.music_duration_s)}`;
+$('silentButton').textContent=`静音合集 · ${duration(DATA.duration_s)}`;
+let current='music',role='main',request=0;
+function renderCards(){
+ $('cards').innerHTML=DATA.cases.filter(c=>role==='all'||c.role===role).map(c=>`<button class="card ${current===c.number?'active':''}" data-case="${c.number}"><img loading="lazy" src="posters/case_${String(c.number).padStart(4,'0')}.jpg" alt="${esc(c.title)}"><div class="card-body"><span class="tag">${esc(c.category)}</span><h3>${esc(c.title)}</h3><small>#${String(c.number).padStart(4,'0')} · ${duration(c.duration)} · ${esc(c.benchmark)}</small></div></button>`).join('');
+ $('cards').querySelectorAll('[data-case]').forEach(b=>b.onclick=()=>select(Number(b.dataset.case)));
+}
+async function select(value,seek=null){
+ const token=++request;current=value;player.pause();
+ let url,title,note,detail,poster;
+ if(typeof value==='number'){
+  const c=DATA.cases.find(c=>c.number===value);url=`videos/case_${String(c.number).padStart(4,'0')}.mp4`;title=c.title;poster=`posters/case_${String(c.number).padStart(4,'0')}.jpg`;
+  note=`静音 · ${c.benchmark} / ${c.id} · 源片段 ${c.start}–${c.end}s`;
+  detail=`<p>${esc(c.query)}</p>`+c.events.map(e=>`<div class="trace"><time>SOURCE ${e.time_s}s</time><div>${e.thinking?`<p class="think"><b>Inner</b> ${esc(e.thinking)}</p>`:''}${e.response?`<p class="speak"><b>Response</b> ${esc(e.response)}</p>`:''}</div></div>`).join('');
+ }else{
+  const music=value==='music';url=music?'SyncPro_showcase_music.mp4':'SyncPro_showcase.mp4';title=music?'合集 · 配乐版':'合集 · 静音版';poster='posters/case_0923.jpg';note=music?'轻音乐铺底，输出出现时自动降低音量；原视频声音关闭。':'静音版。';
+  detail='<p>点击下方视频可查看对应的 Inner 与 Response 输出记录。</p>';
+ }
+ player.poster=poster;player.src=url;player.load();$('playingTitle').textContent=title;$('playingNote').textContent=note;$('detailContent').innerHTML=detail;$('downloadLink').href=url;$('details').open=false;
+ $('musicButton').classList.toggle('active',value==='music');$('silentButton').classList.toggle('active',value==='silent');renderCards();
+ if(seek!==null){
+  await new Promise(resolve=>{if(player.readyState>=1)resolve();else player.addEventListener('loadedmetadata',resolve,{once:true});});
+  if(token!==request)return;player.currentTime=seek;player.play().catch(()=>{});
+ }
+}
+$('musicButton').onclick=()=>select('music');$('silentButton').onclick=()=>select('silent');
+document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;document.querySelectorAll('[data-role]').forEach(x=>x.classList.toggle('active',x===b));renderCards();});
+for(const c of DATA.chapters){const b=document.createElement('button');b.textContent=`${duration(c.start_s)} · #${String(c.case_number).padStart(4,'0')}`;b.onclick=()=>select(current==='silent'?'silent':'music',c.start_s);$('chapters').appendChild(b);}
+select('music');
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+"Dream Culture" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0 License
+https://creativecommons.org/licenses/by/4.0/
+
+Source: https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300046
+Changes: excerpted to video length, loudness normalized, fades and event-based volume ducking applied.
+Keep this attribution with the video download or in its publication description.
