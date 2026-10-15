@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <a href="https://eureka-maggie.github.io/SyncPro/"><img src="https://img.shields.io/badge/Project-Video%20Showcase-8651bf?style=flat-square" alt="Project page and video showcase" /></a>
-  <a href="#paper"><img src="https://img.shields.io/badge/Paper-Coming%20Soon-b31b1b?style=flat-square" alt="Paper" /></a>
+  <a href="https://eureka-maggie.github.io/SyncPro/"><img src="https://img.shields.io/badge/Project-Page-8651bf?style=flat-square" alt="Project page" /></a>
+  <a href="https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf"><img src="https://img.shields.io/badge/Paper-PDF-b31b1b?style=flat-square" alt="Paper PDF" /></a>
   <a href="https://huggingface.co/datasets/EurekaTian/SyncPro-189k"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-SyncPro--189k-ffcc4d?style=flat-square" alt="Hugging Face dataset" /></a>
   <a href="https://github.com/Eureka-Maggie/SyncPro"><img src="https://img.shields.io/badge/GitHub-SyncPro-181717?style=flat-square&logo=github" alt="GitHub repository" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-Apache--2.0-blue?style=flat-square" alt="Apache-2.0 license" /></a>
@@ -16,7 +16,7 @@ SyncPro is a proactive streaming-video model that learns when to keep reasoning,
 
 This repository provides the training implementation and portable data contracts for the paper. Full training and validation annotations are distributed only through [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k) on Hugging Face. Videos are not redistributed.
 
-Watch the [video showcase](https://eureka-maggie.github.io/SyncPro/) for source-synchronized Inner and Response outputs, with music and silent versions.
+Explore the [project page](https://eureka-maggie.github.io/SyncPro/) for the paper, method, dataset, benchmark comparisons, and source-synchronized Inner and Response demonstrations with music and silent versions.
 
 ## Highlights
 
@@ -154,7 +154,11 @@ SyncPro/
 
 ## Paper
 
-The manuscript is currently under double-blind review at ICLR 2027. The paper link, BibTeX entry, and author information will be added after they can be made public.
+**SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding**
+
+Tian Xueyun, Bingbing Xu, Jiaming Liu, Jinpeng Yu, Yang Shi, Yu Zhao, Ruihua Huang, Yuanzhuo Wang, and Huawei Shen.
+
+[Read the paper](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf) · [BibTeX](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.bib)
 
 ## Licenses and attribution
 
