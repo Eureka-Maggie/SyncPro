@@ -2,6 +2,17 @@
 
 SyncPro-189k is an annotation-only release. It does not contain videos, extracted frames, benchmark media, or model-generated copies of third-party assets. Download each source from its publisher, accept any required terms, and resolve the portable paths locally.
 
+The complete annotations are hosted only in the private Hugging Face dataset repository during review; they are not included in the GitHub repository or its training-code checkout:
+
+```bash
+hf auth login
+hf download EurekaTian/SyncPro-189k \
+  --repo-type dataset \
+  --local-dir /path/to/SyncPro-189k
+```
+
+The download contains eight compressed SFT shards under `sft/`, the RL train and validation splits under `rl/`, and the RL schedule metadata under `rl/metadata/`. The files under `data/examples/` in the GitHub repository are illustrative schema examples only.
+
 ## SFT schema
 
 Each line in the `sft` configuration is one streaming trajectory:
@@ -43,7 +54,7 @@ The MAGQA portion was filtered for repeated positive responses: 6,318 trajectori
 | UCF-Crime | 802 | [UCF-Crime project](https://www.crcv.ucf.edu/projects/real-world/) |
 | **Total** | **189,403** | |
 
-Source names and video IDs are retained so users with authorized copies can resolve the annotations. They do not imply redistribution rights.
+Source names and source-provided video IDs are retained so users with authorized copies can resolve the annotations. They do not imply redistribution rights. All released media references are relative; workstation paths, credentials, and internal service identifiers are excluded by the exporter and release audit.
 
 ## RL schema
 

@@ -19,6 +19,7 @@ outputs/
 output/
 checkpoints/
 datasets/
+data/rl/
 videos/
 wandb/
 swanlog/

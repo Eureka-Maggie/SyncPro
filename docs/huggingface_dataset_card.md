@@ -29,6 +29,8 @@ SyncPro-189k is the annotation release for **SyncPro: Synchronous Reasoning and 
 
 > This repository contains annotations only. It does not distribute videos, extracted frames, benchmark media, or model checkpoints.
 
+During double-blind review, this dataset repository is private. Authorized users must authenticate with Hugging Face before using `load_dataset` or `hf download`. The associated GitHub repository intentionally does not mirror the complete annotations.
+
 ## Dataset configurations
 
 | Configuration | Split | Rows | Description |
@@ -89,6 +91,8 @@ The SFT annotations draw from these research datasets:
 The RL validation annotations reference [StreamingBench](https://streamingbench.github.io/), [OVO-Bench](https://github.com/JoeLeelyf/OVO-Bench), and [ProactiveVideoQA](https://github.com/yellow-binary-tree/ProactiveVideoQA).
 
 Source names and identifiers are included for resolution and attribution. Users are responsible for obtaining each underlying dataset, accepting its terms, and complying with its access, citation, and use restrictions.
+
+All released media references are relative. The export pipeline rejects absolute workstation paths and known internal infrastructure markers, and the uploaded files were independently checked for credentials and internal service identifiers.
 
 ## License
 

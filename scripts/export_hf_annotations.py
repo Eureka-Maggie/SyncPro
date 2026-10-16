@@ -174,7 +174,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sft-input', required=True, type=Path)
     parser.add_argument('--output-dir', required=True, type=Path)
-    parser.add_argument('--rl-dir', type=Path, default=ROOT / 'data' / 'rl' / 'balanced')
+    parser.add_argument(
+        '--rl-dir',
+        required=True,
+        type=Path,
+        help='Directory containing the separately prepared RL annotation bundle.',
+    )
     parser.add_argument('--dataset-card', type=Path, default=ROOT / 'docs' / 'huggingface_dataset_card.md')
     parser.add_argument('--expected-sft-rows', type=int, default=189403)
     parser.add_argument('--shards', type=int, default=8)

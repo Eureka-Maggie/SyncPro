@@ -3,7 +3,7 @@ SyncPro: synchronous reasoning and responding for proactive streaming video unde
 This distribution includes modified portions of ms-swift, Copyright ModelScope
 Contributors, licensed under the Apache License 2.0.
 
-The timing annotations under data/rl/balanced reference multiple third-party
-datasets. Their use does not grant rights to the referenced videos or override
-the original datasets' access conditions, licenses, or citation requirements.
-No video files are distributed in this repository.
+The timing annotations distributed separately through SyncPro-189k reference
+multiple third-party datasets. Their use does not grant rights to the referenced
+videos or override the original datasets' access conditions, licenses, or
+citation requirements. No video files are distributed in this repository.

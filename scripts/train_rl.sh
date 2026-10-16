@@ -9,14 +9,15 @@ cd "$ROOT"
 
 : "${SFT_CHECKPOINT:?set SFT_CHECKPOINT to the split-loss+ATR SFT checkpoint}"
 : "${VIDEO_ROOT_OVERRIDES:?set VIDEO_ROOT_OVERRIDES to space-separated SOURCE=/path mappings}"
+: "${SYNCPRO_DATA_DIR:?set SYNCPRO_DATA_DIR to the downloaded SyncPro-189k dataset directory}"
 
 PYTHON="${PYTHON:-python3}"
-DATA_DIR="${RL_DATA_DIR:-$ROOT/data/rl/balanced}"
+DATA_DIR="${RL_DATA_DIR:-$SYNCPRO_DATA_DIR/rl}"
 TRAIN_JSONL="${RL_TRAIN_DATA:-$DATA_DIR/train.jsonl}"
-VAL_JSONL="${RL_VAL_DATA:-$DATA_DIR/val.jsonl}"
-MANIFEST="${RL_MANIFEST:-$DATA_DIR/manifest.json}"
-CLIP_CATALOG="${RL_CLIP_CATALOG:-$DATA_DIR/train_clip_catalog_f60.jsonl}"
-CLIP_MANIFEST="${RL_CLIP_MANIFEST:-$DATA_DIR/train_clip_catalog_f60.manifest.json}"
+VAL_JSONL="${RL_VAL_DATA:-$DATA_DIR/validation.jsonl}"
+MANIFEST="${RL_MANIFEST:-$DATA_DIR/metadata/schedule_manifest.json}"
+CLIP_CATALOG="${RL_CLIP_CATALOG:-$DATA_DIR/metadata/train_clip_catalog_f60.jsonl}"
+CLIP_MANIFEST="${RL_CLIP_MANIFEST:-$DATA_DIR/metadata/train_clip_catalog_f60.manifest.json}"
 OUTPUT_DIR="${OUTPUT_DIR:-$ROOT/outputs/rl_balanced_hard_f1}"
 
 for path in "$SFT_CHECKPOINT" "$TRAIN_JSONL" "$VAL_JSONL" "$MANIFEST" "$CLIP_CATALOG" "$CLIP_MANIFEST"; do

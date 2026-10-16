@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import json
 import importlib.util
+import json
 import sys
 import unittest
-from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BALANCED = ROOT / 'data' / 'rl' / 'balanced'
 
 # Load the stdlib-only reward module without importing the full training stack.
 # This keeps release-contract tests runnable in lightweight CI environments.
@@ -75,23 +73,13 @@ class PortableDataContractTest(unittest.TestCase):
         self.assertIn('MSS_MERGE_GAMMA=0.5', launcher)
         self.assertIn("'merge_policy': 'fixed0p5'", contract_writer)
 
-    def test_balanced_schedule_and_relative_paths(self):
-        train = _jsonl(BALANCED / 'train.jsonl')
-        validation = _jsonl(BALANCED / 'val.jsonl')
-        manifest = json.loads((BALANCED / 'manifest.json').read_text(encoding='utf-8'))
-        self.assertEqual(len(train), 800)
-        self.assertEqual(len(validation), 58)
-        self.assertEqual(manifest['optimizer_steps'], 50)
-        self.assertEqual(manifest['query_batch_size'], 16)
-        self.assertEqual(manifest['schedule_arm'], 'balanced')
-        self.assertEqual(manifest['video_roots'], {})
-        for step in range(50):
-            rows = train[step * 16:(step + 1) * 16]
-            counts = Counter(row['screening']['behavior_category'] for row in rows)
-            self.assertEqual(sorted(counts.values()), [4, 4, 4, 4])
-            self.assertTrue(all(row['screening']['schedule']['step'] == step for row in rows))
-        for row in train + validation:
-            self.assertFalse(Path(row['video']['path']).is_absolute())
+    def test_rl_launcher_requires_hugging_face_annotations(self):
+        launcher = (ROOT / 'scripts' / 'train_rl.sh').read_text(encoding='utf-8')
+        self.assertIn('SYNCPRO_DATA_DIR:?', launcher)
+        self.assertIn('$SYNCPRO_DATA_DIR/rl', launcher)
+        self.assertIn('$DATA_DIR/validation.jsonl', launcher)
+        self.assertIn('$DATA_DIR/metadata/schedule_manifest.json', launcher)
+        self.assertFalse((ROOT / 'data' / 'rl' / 'balanced').exists())
 
     def test_release_has_no_internal_markers_or_extra_shell_launchers(self):
         forbidden = (

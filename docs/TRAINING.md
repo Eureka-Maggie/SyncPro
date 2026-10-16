@@ -11,6 +11,13 @@ Required inputs:
 - user-selected validation JSONL in the same schema
 - `data/system_prompt_dual.txt`
 
+Download `EurekaTian/SyncPro-189k` from Hugging Face as described in [DATA.md](DATA.md), then combine the deterministic SFT shards into a local training JSONL:
+
+```bash
+gzip -cd /path/to/SyncPro-189k/sft/train-*.jsonl.gz \
+  > /path/to/SyncPro-189k/sft/train.jsonl
+```
+
 ```bash
 export MODEL_PATH=/path/to/Qwen3.5-4B
 export SFT_TRAIN_DATA=/path/to/train.jsonl
@@ -47,6 +54,7 @@ cp configs/video_roots.example.env configs/video_roots.env
 source configs/video_roots.env
 
 export SFT_CHECKPOINT=/path/to/final-sft-checkpoint
+export SYNCPRO_DATA_DIR=/path/to/SyncPro-189k
 export OUTPUT_DIR=$PWD/outputs/rl_balanced_hard_f1
 bash scripts/train_rl.sh
 ```

@@ -13,7 +13,7 @@
 
 SyncPro is a proactive streaming-video model that learns when to keep reasoning, when to stay silent, and when to respond. Its dual-stream decoder separates an internal reasoning stream from an external response stream while preserving causal, frame-by-frame processing.
 
-This repository provides the training implementation, portable data contracts, and annotation releases for the paper. Videos are not redistributed. The annotation-only dataset is hosted as [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k).
+This repository provides the training implementation and portable data contracts for the paper. Full training and validation annotations are distributed only through [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k) on Hugging Face. Videos are not redistributed.
 
 ## Highlights
 
@@ -83,11 +83,24 @@ rl_validation = load_dataset("EurekaTian/SyncPro-189k", "rl", split="validation"
 
 The original videos must be obtained from their publishers and used under their respective terms. Source links, schemas, path conventions, and attribution details are collected in [docs/DATA.md](docs/DATA.md).
 
+To download the annotation release after accepting its terms and authenticating with Hugging Face:
+
+```bash
+hf auth login
+hf download EurekaTian/SyncPro-189k \
+  --repo-type dataset \
+  --local-dir /path/to/SyncPro-189k
+```
+
+The GitHub repository intentionally contains only small schema examples; the complete SFT and RL annotations must be obtained from Hugging Face.
+
 ## Training
 
 ### Supervised fine-tuning
 
 ```bash
+gzip -cd /path/to/SyncPro-189k/sft/train-*.jsonl.gz \
+  > /path/to/SyncPro-189k/sft/train.jsonl
 export MODEL_PATH=/path/to/Qwen3.5-4B
 export SFT_TRAIN_DATA=/path/to/SyncPro-189k/sft/train.jsonl
 export SFT_VAL_DATA=/path/to/validation.jsonl
@@ -107,6 +120,7 @@ cp configs/video_roots.example.env configs/video_roots.env
 source configs/video_roots.env
 
 export SFT_CHECKPOINT=$PWD/outputs/sft_split_atr/checkpoint-100
+export SYNCPRO_DATA_DIR=/path/to/SyncPro-189k
 export OUTPUT_DIR=$PWD/outputs/rl_balanced_hard_f1
 bash scripts/train_rl.sh
 ```
@@ -125,8 +139,8 @@ Evaluation task mappings and dataset access notes are in [docs/EVALUATION.md](do
 SyncPro/
 ├── assets/                       # Paper figures used in this README
 ├── configs/                      # Local video-root template
-├── data/examples/                # Minimal SFT example
-├── data/rl/balanced/             # Portable balanced RL annotations
+├── data/examples/                # Minimal schema examples only
+├── data/system_prompt_dual.txt   # Released dual-stream system prompt
 ├── docs/                         # Data, training, and evaluation guides
 ├── examples/models/qwen3_5/      # Dual-stream model and runtime contracts
 ├── examples/rl/                  # Timing dataset and reward implementation
