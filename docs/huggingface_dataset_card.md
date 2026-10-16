@@ -101,8 +101,10 @@ The SyncPro annotation files are licensed under [CC BY-NC-SA 4.0](https://creati
 ## Paper and code
 
 - Code: [Eureka-Maggie/SyncPro](https://github.com/Eureka-Maggie/SyncPro)
-- Paper: under double-blind review at ICLR 2027; link and citation will be added when public
+- Project page: [SyncPro](https://eureka-maggie.github.io/SyncPro/)
+- Paper: [SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf)
+- BibTeX: [citation file](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.bib)
 
 ## Citation
 
-Citation metadata will be added when the paper is public. Until then, please cite the original source datasets used in your work.
+Please use the linked paper citation and also cite the original source datasets used in your work.
