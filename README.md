@@ -8,6 +8,8 @@
   <a href="https://eureka-maggie.github.io/SyncPro/"><img src="https://img.shields.io/badge/Project-Page-8651bf?style=flat-square" alt="Project page" /></a>
   <a href="https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf"><img src="https://img.shields.io/badge/Paper-PDF-b31b1b?style=flat-square" alt="Paper PDF" /></a>
   <a href="https://huggingface.co/datasets/EurekaTian/SyncPro-189k"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-SyncPro--189k-ffcc4d?style=flat-square" alt="Hugging Face dataset" /></a>
+  <a href="https://huggingface.co/EurekaTian/SyncPro-SFT"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model-SFT-ffcc4d?style=flat-square" alt="SyncPro SFT model" /></a>
+  <a href="https://huggingface.co/EurekaTian/SyncPro-RL"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model-RL-ffcc4d?style=flat-square" alt="SyncPro RL model" /></a>
   <a href="https://github.com/Eureka-Maggie/SyncPro"><img src="https://img.shields.io/badge/GitHub-SyncPro-181717?style=flat-square&logo=github" alt="GitHub repository" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-Apache--2.0-blue?style=flat-square" alt="Apache-2.0 license" /></a>
 </p>
@@ -15,6 +17,8 @@
 SyncPro is a proactive streaming-video model that learns when to keep reasoning, when to stay silent, and when to respond. Its dual-stream decoder separates an internal reasoning stream from an external response stream while preserving causal, frame-by-frame processing.
 
 This repository provides the training implementation and portable data contracts for the paper. Full training and validation annotations are distributed only through [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k) on Hugging Face. Videos are not redistributed.
+
+Official inference-only checkpoints are available as [SyncPro-SFT](https://huggingface.co/EurekaTian/SyncPro-SFT) and [SyncPro-RL](https://huggingface.co/EurekaTian/SyncPro-RL). Both releases exclude optimizer and trainer state.
 
 Explore the [project page](https://eureka-maggie.github.io/SyncPro/) for the paper, method, dataset, benchmark comparisons, and source-synchronized Inner and Response demonstrations with music and silent versions.
 
@@ -163,8 +167,9 @@ Tian Xueyun, Bingbing Xu, Jiaming Liu, Jinpeng Yu, Yang Shi, Yu Zhao, Ruihua Hua
 ## Licenses and attribution
 
 - Code in this repository is released under the [Apache License 2.0](LICENSE).
+- SyncPro-SFT and SyncPro-RL model weights are released under Apache-2.0 and are derived from [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B).
 - SyncPro-189k annotations are released under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), subject to the underlying source-dataset terms.
-- No source videos, extracted frames, model checkpoints, or third-party benchmark assets are redistributed.
+- No source videos, extracted frames, or third-party benchmark assets are redistributed.
 - This implementation includes modified portions of [ms-swift](https://github.com/modelscope/ms-swift); its Apache-2.0 notices are retained. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Contributing
