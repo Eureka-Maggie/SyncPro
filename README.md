@@ -134,9 +134,13 @@ bash scripts/train_rl.sh
 
 The paper configuration uses query batch size 16, group size 4, 60 sampled frames, 50 optimizer steps, and the released balanced order. See [docs/TRAINING.md](docs/TRAINING.md) for the full contracts and preflight commands.
 
+## Inference
+
+Use [`examples/infer/proactive_eval/runner.py`](examples/infer/proactive_eval/runner.py) for causal streaming inference. `StreamModel` loads and configures the dual-stream checkpoint once, while `ProactiveStreamRunner` accepts one chronological `PIL.Image` frame per call to `step(frame)`. The released protocol samples video at 1 FPS; benchmark-specific frame and annotation adapters are in the same directory.
+
 ## Evaluation
 
-The paper evaluates proactive response timing on [StreamingBench](https://streamingbench.github.io/), [OVO-Bench](https://github.com/JoeLeelyf/OVO-Bench), and [ProactiveVideoQA](https://github.com/yellow-binary-tree/ProactiveVideoQA). The submitted model achieves 41.2 Acc@2s on StreamingBench-PO, 34.19 mean F1 on OVO-Bench FAR, and 32.43 PAUC on ProactiveVideoQA VAD.
+The paper evaluates proactive response timing on [StreamingBench](https://streamingbench.github.io/), [OVO-Bench](https://github.com/JoeLeelyf/OVO-Bench), and [ProactiveVideoQA](https://github.com/yellow-binary-tree/ProactiveVideoQA). SyncPro achieves 41.2 Acc@2s on StreamingBench-PO, 34.19 mean F1 on OVO-Bench FAR, and 32.43 PAUC on ProactiveVideoQA VAD.
 
 Evaluation task mappings and dataset access notes are in [docs/EVALUATION.md](docs/EVALUATION.md).
 
