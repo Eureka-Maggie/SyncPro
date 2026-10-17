@@ -1,1 +1,6 @@
+# Canonical environment entry point for SyncPro training and inference.
+# Install this file from the repository root; component files are included
+# automatically and should not be installed separately.
 -r requirements/framework.txt
+-r requirements/release.txt
+-r requirements/swanlab.txt

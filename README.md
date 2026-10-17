@@ -58,12 +58,20 @@ cd SyncPro
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
+python -m pip install setuptools==80.10.1 wheel==0.46.3 \
+  packaging==26.1 ninja==1.13.0
 python -m pip install torch==2.10.0
-python -m pip install -e .
-python -m pip install -r requirements/release.txt --no-build-isolation
+python -m pip install -r requirements.txt \
+  --extra-index-url https://download.pytorch.org/whl/cu128 \
+  --no-build-isolation
+python -m pip install -e . --no-deps
 ```
 
-The reference launchers use eight GPUs by default. Batch sizes and distributed settings can be overridden through environment variables.
+The root [`requirements.txt`](requirements.txt) is the canonical environment
+entry point. The reference launchers use eight GPUs by default. Batch sizes
+and distributed settings can be overridden through environment variables; see
+[docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for the hardware record and
+compatibility notes.
 
 ## Data
 
