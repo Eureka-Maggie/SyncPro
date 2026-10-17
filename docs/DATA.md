@@ -1,8 +1,8 @@
 # Data guide
 
-SyncPro-189k is an annotation-only release. It does not contain videos, extracted frames, benchmark media, or model-generated copies of third-party assets. Download each source from its publisher, accept any required terms, and resolve the portable paths locally.
+SyncPro-189k is an SFT annotation-only release. It does not contain videos, extracted frames, benchmark media, RL annotations, or model-generated copies of third-party assets. Download each source from its publisher, accept any required terms, and resolve the portable paths locally.
 
-The complete annotations are hosted only in the private Hugging Face dataset repository during review; they are not included in the GitHub repository or its training-code checkout:
+The complete SFT annotations are hosted on Hugging Face; they are not included in the GitHub repository or its training-code checkout:
 
 ```bash
 hf auth login
@@ -11,7 +11,7 @@ hf download EurekaTian/SyncPro-189k \
   --local-dir /path/to/SyncPro-189k
 ```
 
-The download contains eight compressed SFT shards under `sft/`, the RL train and validation splits under `rl/`, and the RL schedule metadata under `rl/metadata/`. The files under `data/examples/` in the GitHub repository are illustrative schema examples only.
+The download contains eight compressed SFT shards under `sft/`. The files under `data/examples/` in the GitHub repository are illustrative schema examples only.
 
 ## SFT schema
 
@@ -56,9 +56,13 @@ The MAGQA portion was filtered for repeated positive responses: 6,318 trajectori
 
 Source names and source-provided video IDs are retained so users with authorized copies can resolve the annotations. They do not imply redistribution rights. All released media references are relative; workstation paths, credentials, and internal service identifiers are excluded by the exporter and release audit.
 
-## RL schema
+## Local RL input contract
 
-The `rl` configuration uses the `proactive_timing_v1` schema:
+The RL annotations used for the paper are not distributed in SyncPro-189k.
+The released RL launcher remains available for users who independently prepare
+the following `proactive_timing_v1` inputs:
+
+The local RL inputs use the `proactive_timing_v1` schema:
 
 ```json
 {
@@ -77,7 +81,12 @@ The `rl` configuration uses the `proactive_timing_v1` schema:
 }
 ```
 
-Training rows also include the four-way behavior category, source provenance, and fixed schedule slot. The 800-row training split contains 200 examples from each behavior group. The 58-row validation split references [StreamingBench](https://streamingbench.github.io/), [OVO-Bench](https://github.com/JoeLeelyf/OVO-Bench), and [ProactiveVideoQA](https://github.com/yellow-binary-tree/ProactiveVideoQA).
+Training rows also include the four-way behavior category, source provenance,
+and fixed schedule slot. The paper run used 960 ordered rows: 240 examples in
+each behavior group, arranged as 60 batches of 16. Its held-out validation set
+had 58 rows referencing [StreamingBench](https://streamingbench.github.io/),
+[OVO-Bench](https://github.com/JoeLeelyf/OVO-Bench), and
+[ProactiveVideoQA](https://github.com/yellow-binary-tree/ProactiveVideoQA).
 
 ## Resolving media paths
 
@@ -88,8 +97,11 @@ cp configs/video_roots.example.env configs/video_roots.env
 source configs/video_roots.env
 ```
 
-The RL loader combines each `video.root_key` with its relative `video.path`. The SFT loader resolves each relative image path from the working directory or the data root configured by the user. Absolute workstation paths are rejected by the release exporter.
+The RL loader combines each `video.root_key` with its relative `video.path`.
+During SFT cache preparation, `scripts/prepare_sft_cache.sh` runs from
+`SFT_MEDIA_ROOT`, so each portable image path resolves below that directory.
+Absolute workstation paths are rejected by the release exporter.
 
 ## License
 
-The SyncPro annotations are released under CC BY-NC-SA 4.0 because incorporated annotation sources include non-commercial ShareAlike terms. This license covers the SyncPro annotation files only. Every source dataset keeps its own terms, attribution requirements, and access procedure; users must satisfy both the SyncPro annotation license and the applicable source terms.
+The SyncPro SFT annotations are released under CC BY-NC-SA 4.0 because incorporated annotation sources include non-commercial ShareAlike terms. This license covers the released SyncPro annotation files only. Every source dataset keeps its own terms, attribution requirements, and access procedure; users must satisfy both the SyncPro annotation license and the applicable source terms.

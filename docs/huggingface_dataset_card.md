@@ -15,36 +15,26 @@ configs:
   data_files:
   - split: train
     path: sft/train-*.jsonl.gz
-- config_name: rl
-  data_files:
-  - split: train
-    path: rl/train.jsonl
-  - split: validation
-    path: rl/validation.jsonl
 ---
 
 # SyncPro-189k
 
-SyncPro-189k is the annotation release for **SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding**. It supports timing-aware supervised fine-tuning and balanced reinforcement learning for causal streaming-video models.
+SyncPro-189k is the supervised-fine-tuning annotation release for **SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding**.
 
 > This repository contains annotations only. It does not distribute videos, extracted frames, benchmark media, or model checkpoints.
 
-During double-blind review, this dataset repository is private. Authorized users must authenticate with Hugging Face before using `load_dataset` or `hf download`. The associated GitHub repository intentionally does not mirror the complete annotations.
+The associated GitHub repository intentionally does not mirror the complete annotations. The RL annotations used in the paper are not part of this dataset release.
 
 ## Dataset configurations
 
 | Configuration | Split | Rows | Description |
 |---|---:|---:|---|
 | `sft` | train | 189,403 | Dual-stream streaming conversations with relative frame references |
-| `rl` | train | 800 | Fixed-order balanced timing schedule, 50 batches of 16 |
-| `rl` | validation | 58 | Portable timing annotations from three evaluation benchmarks |
 
 ```python
 from datasets import load_dataset
 
 sft = load_dataset("EurekaTian/SyncPro-189k", "sft", split="train")
-rl_train = load_dataset("EurekaTian/SyncPro-189k", "rl", split="train")
-rl_validation = load_dataset("EurekaTian/SyncPro-189k", "rl", split="validation")
 ```
 
 ## SFT annotations
@@ -65,10 +55,6 @@ or an activation such as:
 <speak>...</speak>
 ```
 
-## RL annotations
-
-RL rows use the `proactive_timing_v1` schema. They contain a query, relative video reference, streaming interval, and one or more ground-truth activation windows. Training rows additionally retain the behavior group, source provenance, and fixed schedule slot. The training split has 200 examples in each of four behavior groups.
-
 ## Data sources
 
 The SFT annotations draw from these research datasets:
@@ -88,15 +74,13 @@ The SFT annotations draw from these research datasets:
 | YouCook2 | 1,903 | [Download page](https://youcook2.eecs.umich.edu/download) |
 | UCF-Crime | 802 | [Project page](https://www.crcv.ucf.edu/projects/real-world/) |
 
-The RL validation annotations reference [StreamingBench](https://streamingbench.github.io/), [OVO-Bench](https://github.com/JoeLeelyf/OVO-Bench), and [ProactiveVideoQA](https://github.com/yellow-binary-tree/ProactiveVideoQA).
-
 Source names and identifiers are included for resolution and attribution. Users are responsible for obtaining each underlying dataset, accepting its terms, and complying with its access, citation, and use restrictions.
 
 All released media references are relative. The export pipeline rejects absolute workstation paths and known internal infrastructure markers, and the uploaded files were independently checked for credentials and internal service identifiers.
 
 ## License
 
-The SyncPro annotation files are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This license applies only to the annotation release. Underlying media and source annotations remain subject to their original terms; the more restrictive applicable terms continue to govern their use.
+The released SyncPro SFT annotation files are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This license applies only to the annotation release. Underlying media and source annotations remain subject to their original terms; the more restrictive applicable terms continue to govern their use.
 
 ## Paper and code
 

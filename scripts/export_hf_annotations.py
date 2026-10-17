@@ -131,55 +131,10 @@ def sanitize_sft_row(row: dict[str, Any], *, row_number: int) -> tuple[dict[str,
     return result, len(portable)
 
 
-def copy_and_validate_rl(source_dir: Path, output_dir: Path) -> dict[str, Any]:
-    output_dir.mkdir(parents=True)
-    files = {
-        'train.jsonl': output_dir / 'train.jsonl',
-        'val.jsonl': output_dir / 'validation.jsonl',
-        'manifest.json': output_dir / 'metadata' / 'schedule_manifest.json',
-        'train_clip_catalog_f60.jsonl': output_dir / 'metadata' / 'train_clip_catalog_f60.jsonl',
-        'train_clip_catalog_f60.manifest.json': output_dir / 'metadata' / 'train_clip_catalog_f60.manifest.json',
-    }
-    files['manifest.json'].parent.mkdir(parents=True)
-    summary: dict[str, Any] = {'files': {}}
-    for source_name, destination in files.items():
-        source = source_dir / source_name
-        if not source.is_file():
-            raise FileNotFoundError(source)
-        if source.suffix == '.jsonl':
-            rows = 0
-            with source.open(encoding='utf-8') as handle:
-                for line_number, line in enumerate(handle, start=1):
-                    if not line.strip():
-                        continue
-                    validate_scalar_strings(json.loads(line), location=f'rl/{source_name}:{line_number}')
-                    rows += 1
-            summary['files'][destination.relative_to(output_dir.parent).as_posix()] = {'rows': rows}
-        else:
-            validate_scalar_strings(json.loads(source.read_text(encoding='utf-8')), location=f'rl/{source_name}')
-        shutil.copyfile(source, destination)
-        summary['files'].setdefault(destination.relative_to(output_dir.parent).as_posix(), {})
-        summary['files'][destination.relative_to(output_dir.parent).as_posix()].update({
-            'bytes': destination.stat().st_size,
-            'sha256': sha256(destination),
-        })
-    if summary['files']['rl/train.jsonl'].get('rows') != 800:
-        raise ValueError('RL train split must contain 800 rows')
-    if summary['files']['rl/validation.jsonl'].get('rows') != 58:
-        raise ValueError('RL validation split must contain 58 rows')
-    return summary
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sft-input', required=True, type=Path)
     parser.add_argument('--output-dir', required=True, type=Path)
-    parser.add_argument(
-        '--rl-dir',
-        required=True,
-        type=Path,
-        help='Directory containing the separately prepared RL annotation bundle.',
-    )
     parser.add_argument('--dataset-card', type=Path, default=ROOT / 'docs' / 'huggingface_dataset_card.md')
     parser.add_argument('--expected-sft-rows', type=int, default=189403)
     parser.add_argument('--shards', type=int, default=8)
@@ -239,7 +194,6 @@ def main() -> None:
             'sha256': sha256(path),
         }
 
-    rl_summary = copy_and_validate_rl(args.rl_dir.expanduser(), output / 'rl')
     shutil.copyfile(args.dataset_card.expanduser(), output / 'README.md')
     manifest = {
         'release': 'SyncPro-189k',
@@ -252,7 +206,6 @@ def main() -> None:
             'input_sha256': input_digest.hexdigest(),
             'files': sft_files,
         },
-        'rl': rl_summary,
     }
     manifest_path = output / 'release_manifest.json'
     manifest_path.write_bytes(json_bytes(manifest))

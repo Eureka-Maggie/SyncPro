@@ -8,8 +8,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 : "${MODEL_PATH:?set MODEL_PATH to the Qwen3.5-4B model directory}"
-: "${SFT_TRAIN_DATA:?set SFT_TRAIN_DATA to the training JSONL file}"
-: "${SFT_VAL_DATA:?set SFT_VAL_DATA to the validation JSONL file}"
+: "${SFT_CACHE_DIR:?set SFT_CACHE_DIR to the output of scripts/prepare_sft_cache.sh}"
 
 PYTHON="${PYTHON:-python3}"
 OUTPUT_DIR="${OUTPUT_DIR:-$ROOT/outputs/sft_split_atr}"
@@ -22,10 +21,26 @@ NODE_RANK="${NODE_RANK:-0}"
 MASTER_ADDR="${MASTER_ADDR:-127.0.0.1}"
 MASTER_PORT="${MASTER_PORT:-29500}"
 
-for path in "$MODEL_PATH" "$SFT_TRAIN_DATA" "$SFT_VAL_DATA" "$SYSTEM_PROMPT"; do
+for path in "$MODEL_PATH" "$SFT_CACHE_DIR" "$SYSTEM_PROMPT"; do
     test -e "$path" || { echo "missing required input: $path" >&2; exit 2; }
 done
 command -v "$PYTHON" >/dev/null 2>&1 || { echo "Python not found: $PYTHON" >&2; exit 2; }
+
+CACHED_TRAIN_DATA=()
+CACHED_VAL_DATA=()
+for chunk in "$SFT_CACHE_DIR"/chunk_*; do
+    [[ -d "$chunk" ]] || continue
+    [[ -f "$chunk/train/dataset_info.json" && -f "$chunk/val/dataset_info.json" ]] || {
+        echo "incomplete cached shard: $chunk" >&2
+        exit 2
+    }
+    CACHED_TRAIN_DATA+=("$chunk/train")
+    CACHED_VAL_DATA+=("$chunk/val")
+done
+if (( ${#CACHED_TRAIN_DATA[@]} != 8 )); then
+    echo "expected 8 complete cached shards in $SFT_CACHE_DIR, found ${#CACHED_TRAIN_DATA[@]}" >&2
+    exit 2
+fi
 
 for value in "$TOTAL_BATCH_SIZE" "$PER_DEVICE_BATCH_SIZE" "$NPROC_PER_NODE" "$NNODES"; do
     [[ "$value" =~ ^[1-9][0-9]*$ ]] || { echo "batch/topology values must be positive integers" >&2; exit 2; }
@@ -103,7 +118,7 @@ if [[ "${AUTO_RESUME:-1}" == "1" ]]; then
 fi
 
 echo "[SFT] method=split-loss+ATR merge=fixed-gamma-0.5 world_size=$WORLD_SIZE global_batch=$TOTAL_BATCH_SIZE"
-echo "[SFT] model=$MODEL_PATH train=$SFT_TRAIN_DATA val=$SFT_VAL_DATA output=$OUTPUT_DIR"
+echo "[SFT] model=$MODEL_PATH cache=$SFT_CACHE_DIR output=$OUTPUT_DIR"
 if [[ "${PREFLIGHT_ONLY:-0}" == "1" ]]; then
     echo "[SFT] preflight passed"
     exit 0
@@ -139,9 +154,8 @@ exec env \
     --new_special_tokens '<inner>' '</inner>' '<silent>' '<speak>' '</speak>' \
     --freeze_vit true \
     --system "$SYSTEM_PROMPT" \
-    --dataset "$SFT_TRAIN_DATA" \
-    --val_dataset "$SFT_VAL_DATA" \
-    --split_dataset_ratio 0 \
+    --cached_dataset "${CACHED_TRAIN_DATA[@]}" \
+    --cached_val_dataset "${CACHED_VAL_DATA[@]}" \
     --use_logits_to_keep true \
     --special_token_names '<inner>' '<silent>' '<speak>' \
     --special_token_weights "$SPECIAL_INNER_WEIGHT" "$SPECIAL_SILENT_WEIGHT" "$SPECIAL_SPEAK_WEIGHT" \

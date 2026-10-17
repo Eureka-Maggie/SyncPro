@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Final RL recipe: the fixed 50-step balanced schedule with hard-window F1 reward.
+# Final RL recipe: the fixed 60-step balanced schedule with hard-window F1 reward.
+# The released inference model is the selected step-50 checkpoint from this run.
 # No content reward or external LLM judge is used.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -9,15 +10,14 @@ cd "$ROOT"
 
 : "${SFT_CHECKPOINT:?set SFT_CHECKPOINT to the split-loss+ATR SFT checkpoint}"
 : "${VIDEO_ROOT_OVERRIDES:?set VIDEO_ROOT_OVERRIDES to space-separated SOURCE=/path mappings}"
-: "${SYNCPRO_DATA_DIR:?set SYNCPRO_DATA_DIR to the downloaded SyncPro-189k dataset directory}"
+: "${RL_DATA_DIR:?set RL_DATA_DIR to the prepared balanced RL annotation directory}"
 
 PYTHON="${PYTHON:-python3}"
-DATA_DIR="${RL_DATA_DIR:-$SYNCPRO_DATA_DIR/rl}"
-TRAIN_JSONL="${RL_TRAIN_DATA:-$DATA_DIR/train.jsonl}"
-VAL_JSONL="${RL_VAL_DATA:-$DATA_DIR/validation.jsonl}"
-MANIFEST="${RL_MANIFEST:-$DATA_DIR/metadata/schedule_manifest.json}"
-CLIP_CATALOG="${RL_CLIP_CATALOG:-$DATA_DIR/metadata/train_clip_catalog_f60.jsonl}"
-CLIP_MANIFEST="${RL_CLIP_MANIFEST:-$DATA_DIR/metadata/train_clip_catalog_f60.manifest.json}"
+TRAIN_JSONL="${RL_TRAIN_DATA:-$RL_DATA_DIR/train.jsonl}"
+VAL_JSONL="${RL_VAL_DATA:-$RL_DATA_DIR/val.jsonl}"
+MANIFEST="${RL_MANIFEST:-$RL_DATA_DIR/manifest.json}"
+CLIP_CATALOG="${RL_CLIP_CATALOG:-$RL_DATA_DIR/train_clip_catalog_f60.jsonl}"
+CLIP_MANIFEST="${RL_CLIP_MANIFEST:-$RL_DATA_DIR/train_clip_catalog_f60.manifest.json}"
 OUTPUT_DIR="${OUTPUT_DIR:-$ROOT/outputs/rl_balanced_hard_f1}"
 
 for path in "$SFT_CHECKPOINT" "$TRAIN_JSONL" "$VAL_JSONL" "$MANIFEST" "$CLIP_CATALOG" "$CLIP_MANIFEST"; do
@@ -73,7 +73,7 @@ mkdir -p "$OUTPUT_DIR"
     --clip_catalog "$CLIP_CATALOG" \
     --clip_catalog_manifest "$CLIP_MANIFEST" \
     --query_batch_size "$QUERY_BATCH_SIZE" \
-    --max_steps "${MAX_STEPS:-50}" \
+    --max_steps "${MAX_STEPS:-60}" \
     --max_frames 60 \
     "${VIDEO_ARGS[@]}"
 
@@ -93,7 +93,7 @@ mkdir -p "$OUTPUT_DIR"
     --rank_sharding balanced_frames_v1
 
 echo "[RL] method=balanced+hard-window-F1 world_size=$WORLD_SIZE query_batch=$QUERY_BATCH_SIZE G=$GROUP_SIZE"
-echo "[RL] checkpoint=$SFT_CHECKPOINT data=$DATA_DIR output=$OUTPUT_DIR"
+echo "[RL] checkpoint=$SFT_CHECKPOINT data=$RL_DATA_DIR output=$OUTPUT_DIR"
 if [[ "${PREFLIGHT_ONLY:-0}" == "1" ]]; then
     echo "[RL] preflight passed"
     exit 0
@@ -160,7 +160,7 @@ exec "$PYTHON" -m torch.distributed.run \
     --temperature "${TEMPERATURE:-1.0}" \
     --top_p "${TOP_P:-1.0}" \
     --seed "${SEED:-42}" \
-    --max_steps "${MAX_STEPS:-50}" \
+    --max_steps "${MAX_STEPS:-60}" \
     --reward_format 0 \
     --reward_timing 1 \
     --timing_reward_mode hard_window_f1_v1 \
@@ -172,7 +172,7 @@ exec "$PYTHON" -m torch.distributed.run \
     --no-eval_at_start \
     --distributed_timeout_seconds "${DISTRIBUTED_TIMEOUT_SECONDS:-7200}" \
     --deterministic_algorithms \
-    --save_every "${SAVE_EVERY:-5}" \
+    --save_every "${SAVE_EVERY:-10}" \
     "${REPORT_ARGS[@]}" \
     "${RESUME_ARGS[@]}" \
     "$@"

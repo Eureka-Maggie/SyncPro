@@ -73,25 +73,41 @@ class PortableDataContractTest(unittest.TestCase):
         self.assertIn('MSS_MERGE_GAMMA=0.5', launcher)
         self.assertIn("'merge_policy': 'fixed0p5'", contract_writer)
 
-    def test_rl_launcher_requires_hugging_face_annotations(self):
+    def test_sft_cache_preparation_matches_reference_split(self):
+        launcher = (ROOT / 'scripts' / 'prepare_sft_cache.sh').read_text(encoding='utf-8')
+        self.assertIn('SPLIT_DATASET_RATIO="${SPLIT_DATASET_RATIO:-0.01}"', launcher)
+        self.assertIn('DATA_SEED="${DATA_SEED:-42}"', launcher)
+        self.assertIn("${#SHARDS[@]} != 8", launcher)
+        self.assertIn('--dataset_shuffle true', launcher)
+
+    def test_rl_launcher_requires_separately_prepared_annotations(self):
         launcher = (ROOT / 'scripts' / 'train_rl.sh').read_text(encoding='utf-8')
-        self.assertIn('SYNCPRO_DATA_DIR:?', launcher)
-        self.assertIn('$SYNCPRO_DATA_DIR/rl', launcher)
-        self.assertIn('$DATA_DIR/validation.jsonl', launcher)
-        self.assertIn('$DATA_DIR/metadata/schedule_manifest.json', launcher)
+        self.assertIn('RL_DATA_DIR:?', launcher)
+        self.assertNotIn('SYNCPRO_DATA_DIR', launcher)
+        self.assertIn('$RL_DATA_DIR/val.jsonl', launcher)
+        self.assertIn('$RL_DATA_DIR/manifest.json', launcher)
+        self.assertIn('${MAX_STEPS:-60}', launcher)
+        self.assertIn('${SAVE_EVERY:-10}', launcher)
         self.assertFalse((ROOT / 'data' / 'rl' / 'balanced').exists())
 
     def test_release_has_no_internal_markers_or_extra_shell_launchers(self):
         forbidden = (
             'ali' + 'baba',
             'ali' + 'yun',
+            '阿' + '里',
             'dash' + 'scope',
             'llm' + 'chat',
             'pri' + 'mus',
             'tian' + 'xueyun',
+            'oss' + '2==',
         )
         for path in ROOT.rglob('*'):
-            if not path.is_file() or '.git' in path.parts or path.suffix == '.pyc':
+            if (
+                not path.is_file()
+                or '.git' in path.parts
+                or '.release' in path.parts
+                or path.suffix == '.pyc'
+            ):
                 continue
             try:
                 text = path.read_text(encoding='utf-8').lower()
@@ -100,7 +116,10 @@ class PortableDataContractTest(unittest.TestCase):
             for marker in forbidden:
                 self.assertNotIn(marker, text, f'{marker!r} remains in {path.relative_to(ROOT)}')
         shell_files = sorted(path.relative_to(ROOT).as_posix() for path in ROOT.rglob('*.sh'))
-        self.assertEqual(shell_files, ['scripts/train_rl.sh', 'scripts/train_sft.sh'])
+        self.assertEqual(
+            shell_files,
+            ['scripts/prepare_sft_cache.sh', 'scripts/train_rl.sh', 'scripts/train_sft.sh'],
+        )
 
 
 if __name__ == '__main__':

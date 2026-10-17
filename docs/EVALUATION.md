@@ -10,4 +10,6 @@ SyncPro is evaluated in causal streaming mode: frames arrive chronologically, fu
 
 The paper reports 41.2 Acc@2s, 34.19 mean F1, and 32.43 PAUC, respectively. Obtain the benchmark media and annotations from their maintainers and follow the official evaluation protocols. This repository does not redistribute benchmark videos.
 
-The portable validation file at `rl/validation.jsonl` in the Hugging Face [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k) release contains only the temporal/query annotations needed by the training-side evaluator. It is not a replacement for each benchmark's official test set or evaluation package.
+The paper's RL validation annotations are not part of the public SyncPro-189k
+release. Obtain the official benchmark annotations from their maintainers;
+they are not replaced by a repository-local or Hugging Face convenience split.

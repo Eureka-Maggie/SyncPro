@@ -35,7 +35,8 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install setuptools==80.10.1 wheel==0.46.3 \
   packaging==26.1 ninja==1.13.0
-python -m pip install torch==2.10.0
+python -m pip install torch==2.10.0+cu128 torchvision==0.25.0+cu128 \
+  --index-url https://download.pytorch.org/whl/cu128
 python -m pip install -r requirements.txt \
   --extra-index-url https://download.pytorch.org/whl/cu128 \
   --no-build-isolation
@@ -54,8 +55,10 @@ not need to choose among them or install them separately.
 ## External requirements
 
 - Download `Qwen3.5-4B` and set `MODEL_PATH` for SFT.
-- Download `EurekaTian/SyncPro-189k` and map the source videos locally as
-  described in `docs/DATA.md` and `docs/TRAINING.md`.
+- Download the SFT-only `EurekaTian/SyncPro-189k` release and map its source
+  frames locally as described in `docs/DATA.md` and `docs/TRAINING.md`.
+- RL annotations are not included in the public dataset release; the RL
+  launcher requires a separately prepared local schedule.
 - Experiment tracking is optional and disabled by default. Keep any tracking
   credentials in environment variables rather than config files.
 

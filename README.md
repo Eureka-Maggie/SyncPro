@@ -16,7 +16,7 @@
 
 SyncPro is a proactive streaming-video model that learns when to keep reasoning, when to stay silent, and when to respond. Its dual-stream decoder separates an internal reasoning stream from an external response stream while preserving causal, frame-by-frame processing.
 
-This repository provides the training implementation and portable data contracts for the paper. Full training and validation annotations are distributed only through [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k) on Hugging Face. Videos are not redistributed.
+This repository provides the training implementation and portable data contracts for the paper. The complete SFT annotations are distributed only through [SyncPro-189k](https://huggingface.co/datasets/EurekaTian/SyncPro-189k) on Hugging Face. Videos and RL annotations are not redistributed.
 
 Official inference-only checkpoints are available as [SyncPro-SFT](https://huggingface.co/EurekaTian/SyncPro-SFT) and [SyncPro-RL](https://huggingface.co/EurekaTian/SyncPro-RL). Both releases exclude optimizer and trainer state.
 
@@ -26,7 +26,7 @@ Explore the [project page](https://eureka-maggie.github.io/SyncPro/) for the pap
 
 - **Synchronous dual streams.** Internal reasoning and external response tokens are generated together, with a fixed additive merge coefficient γ = 0.5.
 - **Timing-aware SFT.** Split action loss is paired with Action Temporal Ranking (ATR), which contrasts the correct activation time against nearby hard negatives.
-- **Balanced RL.** A fixed-order 50-step schedule balances four proactive behavior groups and optimizes chronological hard-window F1.
+- **Balanced RL.** A fixed-order 60-step schedule balances four proactive behavior groups and optimizes chronological hard-window F1; the released model is the selected step-50 checkpoint.
 - **189K trajectories.** The SFT release contains 189,403 streaming trajectories and 13.52M frame-level micro-turns from 12 public research sources.
 
 ## Method
@@ -55,12 +55,13 @@ Linux, Python 3.11, and CUDA GPUs are recommended. Install a CUDA-compatible PyT
 ```bash
 git clone https://github.com/Eureka-Maggie/SyncPro.git
 cd SyncPro
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install setuptools==80.10.1 wheel==0.46.3 \
   packaging==26.1 ninja==1.13.0
-python -m pip install torch==2.10.0
+python -m pip install torch==2.10.0+cu128 torchvision==0.25.0+cu128 \
+  --index-url https://download.pytorch.org/whl/cu128
 python -m pip install -r requirements.txt \
   --extra-index-url https://download.pytorch.org/whl/cu128 \
   --no-build-isolation
@@ -85,15 +86,11 @@ The Hugging Face release contains annotations only:
 | Configuration | Split | Rows | Contents |
 |---|---:|---:|---|
 | `sft` | train | 189,403 | Dual-stream conversations and portable frame references |
-| `rl` | train | 800 | Balanced fixed-order optimization schedule |
-| `rl` | validation | 58 | StreamingBench, OVO-Bench, and ProactiveVideoQA annotations |
 
 ```python
 from datasets import load_dataset
 
 sft = load_dataset("EurekaTian/SyncPro-189k", "sft", split="train")
-rl_train = load_dataset("EurekaTian/SyncPro-189k", "rl", split="train")
-rl_validation = load_dataset("EurekaTian/SyncPro-189k", "rl", split="validation")
 ```
 
 The original videos must be obtained from their publishers and used under their respective terms. Source links, schemas, path conventions, and attribution details are collected in [docs/DATA.md](docs/DATA.md).
@@ -107,18 +104,23 @@ hf download EurekaTian/SyncPro-189k \
   --local-dir /path/to/SyncPro-189k
 ```
 
-The GitHub repository intentionally contains only small schema examples; the complete SFT and RL annotations must be obtained from Hugging Face.
+The GitHub repository intentionally contains only small schema examples; the complete SFT annotations must be obtained from Hugging Face. The RL annotations used for the paper are not part of the public dataset release.
 
 ## Training
 
 ### Supervised fine-tuning
 
+The reference run preprocesses each of the eight released shards separately,
+using seed 42 and a 1% validation split. `SFT_MEDIA_ROOT` must contain the
+source frame trees referenced by the portable `images` paths.
+
 ```bash
-gzip -cd /path/to/SyncPro-189k/sft/train-*.jsonl.gz \
-  > /path/to/SyncPro-189k/sft/train.jsonl
 export MODEL_PATH=/path/to/Qwen3.5-4B
-export SFT_TRAIN_DATA=/path/to/SyncPro-189k/sft/train.jsonl
-export SFT_VAL_DATA=/path/to/validation.jsonl
+export SFT_SHARD_DIR=/path/to/SyncPro-189k/sft
+export SFT_MEDIA_ROOT=/path/to/source-frame-root
+export SFT_CACHE_DIR=$PWD/.cache/syncpro-sft
+bash scripts/prepare_sft_cache.sh
+
 export OUTPUT_DIR=$PWD/outputs/sft_split_atr
 bash scripts/train_sft.sh
 ```
@@ -134,13 +136,18 @@ cp configs/video_roots.example.env configs/video_roots.env
 # Edit DATASET_ROOT in configs/video_roots.env.
 source configs/video_roots.env
 
-export SFT_CHECKPOINT=$PWD/outputs/sft_split_atr/checkpoint-100
-export SYNCPRO_DATA_DIR=/path/to/SyncPro-189k
+export SFT_CHECKPOINT=/path/to/sft-checkpoint-1448
+export RL_DATA_DIR=/path/to/prepared/balanced-rl-schedule
 export OUTPUT_DIR=$PWD/outputs/rl_balanced_hard_f1
 bash scripts/train_rl.sh
 ```
 
-The paper configuration uses query batch size 16, group size 4, 60 sampled frames, 50 optimizer steps, and the released balanced order. See [docs/TRAINING.md](docs/TRAINING.md) for the full contracts and preflight commands.
+Replace `SFT_CHECKPOINT` with the actual final SFT checkpoint selected for RL;
+the paper run used SFT step 1448. The balanced RL run is configured for 60
+optimizer steps with query batch size 16, group size 4, and 60 sampled frames.
+The released RL model is its selected step-50 checkpoint. Because the RL
+annotations are not released, `RL_DATA_DIR` must be supplied separately in
+the schema described in [docs/TRAINING.md](docs/TRAINING.md).
 
 ## Inference
 
@@ -163,6 +170,7 @@ SyncPro/
 ├── docs/                         # Data, training, and evaluation guides
 ├── examples/models/qwen3_5/      # Dual-stream model and runtime contracts
 ├── examples/rl/                  # Timing dataset and reward implementation
+├── scripts/prepare_sft_cache.sh  # Exact eight-shard SFT preprocessing
 ├── scripts/train_sft.sh          # Fixed-γ split-loss + ATR recipe
 ├── scripts/train_rl.sh           # Balanced hard-F1 RL recipe
 └── tests/test_release_contract.py
@@ -180,7 +188,7 @@ Tian Xueyun, Bingbing Xu, Jiaming Liu, Jinpeng Yu, Yang Shi, Yu Zhao, Ruihua Hua
 
 - Code in this repository is released under the [Apache License 2.0](LICENSE).
 - SyncPro-SFT and SyncPro-RL model weights are released under Apache-2.0 and are derived from [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B).
-- SyncPro-189k annotations are released under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), subject to the underlying source-dataset terms.
+- SyncPro-189k SFT annotations are released under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), subject to the underlying source-dataset terms.
 - No source videos, extracted frames, or third-party benchmark assets are redistributed.
 - This implementation includes modified portions of [ms-swift](https://github.com/modelscope/ms-swift); its Apache-2.0 notices are retained. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
