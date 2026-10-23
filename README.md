@@ -176,14 +176,6 @@ SyncPro/
 └── tests/test_release_contract.py
 ```
 
-## Paper
-
-**SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding**
-
-Tian Xueyun, Bingbing Xu, Jiaming Liu, Jinpeng Yu, Yang Shi, Yu Zhao, Ruihua Huang, Yuanzhuo Wang, and Huawei Shen.
-
-[Read the paper](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf) · [BibTeX](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.bib)
-
 ## Licenses and attribution
 
 - Code in this repository is released under the [Apache License 2.0](LICENSE).
