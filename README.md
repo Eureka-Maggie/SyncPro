@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://eureka-maggie.github.io/SyncPro/"><img src="https://img.shields.io/badge/Project-Page-8651bf?style=flat-square" alt="Project page" /></a>
-  <a href="https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf"><img src="https://img.shields.io/badge/Paper-PDF-b31b1b?style=flat-square" alt="Paper PDF" /></a>
+  <a href="https://arxiv.org/abs/2610.32132"><img src="https://img.shields.io/badge/arXiv-2610.32132-b31b1b?style=flat-square&logo=arxiv" alt="arXiv paper" /></a>
   <a href="https://huggingface.co/datasets/EurekaTian/SyncPro-189k"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-SyncPro--189k-ffcc4d?style=flat-square" alt="Hugging Face dataset" /></a>
   <a href="https://huggingface.co/EurekaTian/SyncPro-SFT"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model-SFT-ffcc4d?style=flat-square" alt="SyncPro SFT model" /></a>
   <a href="https://huggingface.co/EurekaTian/SyncPro-RL"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model-RL-ffcc4d?style=flat-square" alt="SyncPro RL model" /></a>
@@ -187,3 +187,19 @@ SyncPro/
 ## Contributing
 
 Bug reports and focused pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes. For security-sensitive reports, follow [SECURITY.md](SECURITY.md).
+
+## Citation
+
+```bibtex
+@misc{tian2026syncprosynchronousreasoningresponding,
+      title={SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding}, 
+      author={Xueyun Tian and Bingbing Xu and Jiaming Liu and Jinpeng Yu and Yang Shi and Yu Zhao and Ruihua Huang and Yuanzhuo Wang and Huawei Shen},
+      year={2026},
+      eprint={2610.32132},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2610.32132}, 
+}
+```
+
+[Download BibTeX](CITATION.bib).

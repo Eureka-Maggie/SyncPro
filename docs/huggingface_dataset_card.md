@@ -6,6 +6,7 @@ task_categories:
 - visual-question-answering
 - video-text-to-text
 tags:
+- arxiv:2610.32132
 - streaming-video
 - proactive-video-understanding
 - temporal-grounding
@@ -86,9 +87,21 @@ The released SyncPro SFT annotation files are licensed under [CC BY-NC-SA 4.0](h
 
 - Code: [Eureka-Maggie/SyncPro](https://github.com/Eureka-Maggie/SyncPro)
 - Project page: [SyncPro](https://eureka-maggie.github.io/SyncPro/)
-- Paper: [SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.pdf)
+- Paper: [SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding](https://arxiv.org/abs/2610.32132)
 - BibTeX: [citation file](https://eureka-maggie.github.io/SyncPro/paper/SyncPro.bib)
 
 ## Citation
 
 Please use the linked paper citation and also cite the original source datasets used in your work.
+
+```bibtex
+@misc{tian2026syncprosynchronousreasoningresponding,
+      title={SyncPro: Synchronous Reasoning and Responding for Proactive Streaming Video Understanding}, 
+      author={Xueyun Tian and Bingbing Xu and Jiaming Liu and Jinpeng Yu and Yang Shi and Yu Zhao and Ruihua Huang and Yuanzhuo Wang and Huawei Shen},
+      year={2026},
+      eprint={2610.32132},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2610.32132}, 
+}
+```
